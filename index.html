@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Brayan Gael García — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:#f5f3ee;
+  --bg2:#edeae3;
+  --ink:#0f0e0c;
+  --ink2:#3a3830;
+  --muted:#8a8679;
+  --accent:#c8501a;
+  --accent2:#1a5dc8;
+  --surface:#ffffff;
+  --border:#ddd9d0;
+  --nav-w:260px;
+}
+
+html{scroll-behavior:smooth;font-size:15px;}
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Syne',sans-serif;
+  display:flex;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── CURSOR ── */
+.cursor{
+  position:fixed;width:10px;height:10px;
+  border-radius:50%;background:var(--accent);
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform .1s,width .3s,height .3s,opacity .3s;
+  mix-blend-mode:multiply;
+}
+.cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border-radius:50%;border:1.5px solid var(--accent);
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform .18s ease,width .3s,height .3s,opacity .3s;
+  opacity:.5;
+}
+
+/* ── SIDEBAR NAV ── */
+nav{
+  position:fixed;left:0;top:0;bottom:0;
+  width:var(--nav-w);
+  background:var(--ink);
+  display:flex;flex-direction:column;
+  padding:48px 36px;
+  z-index:100;
+  transition:transform .4s ease;
+}
+
+.nav-logo{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-size:1.5rem;
+  color:#fff;
+  letter-spacing:-.01em;
+  margin-bottom:6px;
+}
+
+.nav-sub{
+  font-family:'Geist Mono',monospace;
+  font-size:10px;
+  color:var(--accent);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  margin-bottom:48px;
+}
+
+.nav-links{
+  display:flex;flex-direction:column;gap:4px;
+  flex:1;
+}
+
+.nav-link{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  border-radius:8px;
+  text-decoration:none;
+  font-size:.8rem;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#7a7670;
+  transition:all .25s;
+  position:relative;
+}
+.nav-link:hover,.nav-link.active{color:#fff;background:rgba(255,255,255,.07);}
+.nav-link.active::before{
+  content:'';
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0;
+}
+.nav-link svg{width:15px;height:15px;opacity:.6;flex-shrink:0;}
+.nav-link:hover svg,.nav-link.active svg{opacity:1;}
+
+.nav-bottom{
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:24px;
+}
+
+.nav-avail{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Geist Mono',monospace;
+  font-size:10px;color:#7a7670;
+  margin-bottom:16px;
+}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 2s infinite;}
+
+.social-row{display:flex;gap:10px;}
+.social-btn{
+  width:34px;height:34px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:#7a7670;text-decoration:none;transition:all .2s;
+}
+.social-btn:hover{border-color:var(--accent);color:var(--accent);}
+.social-btn svg{width:14px;height:14px;}
+
+/* ── HAMBURGER ── */
+.hamburger{
+  display:none;position:fixed;top:20px;left:20px;z-index:200;
+  width:40px;height:40px;border-radius:10px;
+  background:var(--ink);border:none;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.hamburger span{display:block;width:20px;height:2px;background:#fff;border-radius:2px;transition:.3s;}
+
+/* ── MAIN ── */
+main{
+  margin-left:var(--nav-w);
+  flex:1;
+  min-height:100vh;
+}
+
+/* ── SECTIONS GENERAL ── */
+section{
+  min-height:100vh;
+  padding:80px 72px;
+  display:flex;flex-direction:column;justify-content:center;
+  border-bottom:1px solid var(--border);
+  opacity:0;transform:translateY(30px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+section.visible{opacity:1;transform:translateY(0);}
+
+.sec-label{
+  font-family:'Geist Mono',monospace;
+  font-size:10px;letter-spacing:.2em;
+  color:var(--accent);text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+.sec-title{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2.4rem,4vw,3.8rem);
+  font-weight:400;
+  color:var(--ink);
+  line-height:1.1;
+  margin-bottom:40px;
+}
+.sec-title em{color:var(--accent);font-style:italic;}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;
+  padding:0 72px;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-bg-text{
+  position:absolute;
+  bottom:-40px;right:-20px;
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(8rem,18vw,20rem);
+  font-weight:400;
+  font-style:italic;
+  color:transparent;
+  -webkit-text-stroke:1px var(--border);
+  white-space:nowrap;
+  pointer-events:none;
+  user-select:none;
+  line-height:1;
+}
+
+.hero-eyebrow{
+  font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.2em;
+  color:var(--accent);text-transform:uppercase;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--accent);}
+
+.hero-name{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(3.5rem,7vw,7rem);
+  font-weight:400;
+  line-height:.95;
+  color:var(--ink);
+  margin-bottom:24px;
+}
+.hero-name .line2{
+  display:block;
+  font-style:italic;
+  color:var(--accent);
+}
+
+.hero-role{
+  font-size:1.1rem;
+  font-weight:500;
+  color:var(--ink2);
+  margin-bottom:40px;
+  letter-spacing:.02em;
+}
+.hero-role span{
+  display:inline-block;
+  padding:4px 12px;
+  background:var(--ink);
+  color:#fff;
+  border-radius:4px;
+  font-size:.75rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-right:6px;
+  vertical-align:middle;
+}
+
+.hero-desc{
+  max-width:520px;
+  color:var(--muted);
+  font-size:1rem;
+  line-height:1.75;
+  margin-bottom:48px;
+}
+
+.hero-cta{
+  display:flex;gap:14px;flex-wrap:wrap;
+}
+
+.btn-primary{
+  padding:14px 28px;
+  background:var(--ink);
+  color:#fff;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:.8rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:all .25s;
+  border:2px solid var(--ink);
+}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent);}
+
+.btn-secondary{
+  padding:14px 28px;
+  background:transparent;
+  color:var(--ink);
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:.8rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:all .25s;
+  border:2px solid var(--border);
+}
+.btn-secondary:hover{border-color:var(--ink);}
+
+.hero-stats{
+  display:flex;gap:40px;margin-top:64px;
+  padding-top:40px;border-top:1px solid var(--border);
+}
+.stat-num{
+  font-family:'Instrument Serif',serif;
+  font-size:2.5rem;
+  font-style:italic;
+  color:var(--accent);
+  display:block;line-height:1;margin-bottom:4px;
+}
+.stat-label{font-size:.75rem;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+
+/* ── ABOUT ── */
+#about .about-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;
+}
+.about-text{font-size:1.05rem;color:var(--ink2);line-height:1.8;margin-bottom:24px;}
+.about-text strong{color:var(--accent);font-weight:700;}
+
+.about-contact{display:flex;flex-direction:column;gap:10px;}
+.contact-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  text-decoration:none;color:var(--ink2);
+  font-size:.85rem;transition:all .2s;
+}
+.contact-row:hover{border-color:var(--accent);color:var(--accent);}
+.contact-row svg{width:16px;height:16px;flex-shrink:0;color:var(--accent);}
+.contact-label{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-left:auto;}
+
+/* ── EXPERIENCE ── */
+#experience .exp-list{display:flex;flex-direction:column;gap:0;}
+
+.exp-item{
+  display:grid;grid-template-columns:180px 1fr;gap:40px;
+  padding:40px 0;border-top:1px solid var(--border);
+  transition:all .2s;
+}
+.exp-item:last-child{border-bottom:1px solid var(--border);}
+
+.exp-meta{}
+.exp-period{
+  font-family:'Geist Mono',monospace;
+  font-size:11px;color:var(--muted);
+  letter-spacing:.05em;margin-bottom:8px;
+}
+.exp-company{font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:4px;}
+.exp-location{font-size:.8rem;color:var(--muted);}
+
+.exp-badge{
+  display:inline-block;margin-top:10px;
+  padding:3px 10px;border-radius:4px;
+  font-family:'Geist Mono',monospace;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(200,80,26,.1);color:var(--accent);
+  border:1px solid rgba(200,80,26,.2);
+}
+
+.exp-content{}
+.exp-role{font-size:1.3rem;font-weight:700;color:var(--ink);margin-bottom:16px;}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.exp-bullets li{
+  font-size:.9rem;color:var(--ink2);
+  padding-left:20px;position:relative;line-height:1.6;
+}
+.exp-bullets li::before{
+  content:'—';position:absolute;left:0;
+  color:var(--accent);font-weight:700;
+}
+
+/* ── PROJECTS ── */
+#projects .projects-wrap{display:flex;flex-direction:column;gap:20px;}
+
+.proj-card{
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:28px;
+  padding:28px 32px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  transition:all .3s;
+  cursor:default;
+}
+.proj-card:hover{
+  border-color:var(--accent);
+  transform:translateX(6px);
+  box-shadow:0 8px 40px rgba(0,0,0,.07);
+}
+
+.proj-num{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;font-size:2.5rem;
+  color:var(--border);line-height:1;
+  width:52px;text-align:center;
+  transition:.3s;
+}
+.proj-card:hover .proj-num{color:var(--accent);}
+
+.proj-info{}
+.proj-name{font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.proj-desc{font-size:.85rem;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.proj-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.ptag{
+  font-family:'Geist Mono',monospace;font-size:9px;
+  color:var(--accent2);
+  background:rgba(26,93,200,.07);
+  border:1px solid rgba(26,93,200,.18);
+  border-radius:4px;padding:3px 8px;
+  letter-spacing:.05em;
+}
+
+.proj-arrow{
+  width:40px;height:40px;border-radius:8px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:.3s;
+  flex-shrink:0;
+}
+.proj-card:hover .proj-arrow{border-color:var(--accent);color:var(--accent);}
+.proj-arrow svg{width:16px;height:16px;}
+
+/* ── SKILLS ── */
+#skills .skills-cols{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+
+.skill-block{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;padding:26px;
+  transition:.2s;
+}
+.skill-block:hover{border-color:var(--accent);box-shadow:0 4px 24px rgba(200,80,26,.06);}
+
+.sb-icon{
+  width:42px;height:42px;border-radius:10px;
+  background:var(--bg2);display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-bottom:14px;
+}
+.sb-cat{
+  font-family:'Geist Mono',monospace;font-size:9px;
+  color:var(--accent);letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.sb-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.spill{
+  font-size:.78rem;font-weight:600;color:var(--ink2);
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:5px;padding:4px 10px;
+  transition:.2s;
+}
+.spill:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+/* ── EDUCATION & CERTS ── */
+#education .edu-cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+
+.edu-list{display:flex;flex-direction:column;gap:16px;}
+.edu-item{
+  padding:22px 24px;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;
+  border-left:3px solid var(--accent);
+}
+.ei-period{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--accent);letter-spacing:.1em;margin-bottom:6px;
+}
+.ei-degree{font-weight:700;color:var(--ink);font-size:.95rem;margin-bottom:4px;}
+.ei-school{font-size:.82rem;color:var(--muted);}
+
+.certs-title{
+  font-family:'Instrument Serif',serif;font-size:1.6rem;
+  margin-bottom:20px;color:var(--ink);
+}
+.cert-list{display:flex;flex-direction:column;gap:10px;}
+.cert-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:var(--surface);
+  border:1px solid var(--border);border-radius:9px;
+  transition:.2s;
+}
+.cert-row:hover{border-color:var(--border);background:var(--bg2);}
+.cr-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.cr-name{font-size:.82rem;color:var(--ink2);flex:1;line-height:1.4;}
+.cr-year{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--muted);white-space:nowrap;
+}
+
+/* ── CONTACT FINAL ── */
+#contact{
+  background:var(--ink);
+  border-bottom:none;
+}
+#contact .sec-label{color:var(--accent);}
+#contact .sec-title{color:#fff;}
+#contact .sec-title em{color:var(--accent);}
+
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+
+.contact-links{display:flex;flex-direction:column;gap:12px;}
+.cl-item{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 22px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  text-decoration:none;color:rgba(255,255,255,.7);
+  font-size:.9rem;transition:.25s;
+}
+.cl-item:hover{border-color:var(--accent);color:#fff;background:rgba(200,80,26,.08);}
+.cl-item svg{width:18px;height:18px;color:var(--accent);flex-shrink:0;}
+
+.contact-msg{color:rgba(255,255,255,.5);font-size:1rem;line-height:1.8;margin-bottom:32px;}
+.contact-msg strong{color:#fff;}
+
+.footer-copy{
+  font-family:'Geist Mono',monospace;
+  font-size:10px;color:rgba(255,255,255,.25);
+  margin-top:60px;letter-spacing:.1em;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ── ANIMATIONS ── */
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{transform:translateX(-100%);}
+  nav.open{transform:translateX(0);}
+  main{margin-left:0;}
+  .hamburger{display:flex;}
+  section{padding:80px 28px;}
+  #hero{padding:80px 28px;}
+  .about-grid,.contact-grid,.edu-cols{grid-template-columns:1fr;}
+  .skills-cols{grid-template-columns:1fr 1fr;}
+  .exp-item{grid-template-columns:1fr;gap:12px;}
+  .proj-card{grid-template-columns:1fr auto;gap:16px;}
+  .proj-num{display:none;}
+  .hero-stats{gap:24px;}
+}
+@media(max-width:600px){
+  .skills-cols{grid-template-columns:1fr;}
+  .hero-name{font-size:3rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<!-- HAMBURGER -->
+<button class="hamburger" id="ham" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <p class="nav-logo">Brayan G.</p>
+  <p class="nav-sub">QA · Dev</p>
+
+  <div class="nav-links">
+    <a href="#hero" class="nav-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </a>
+    <a href="#about" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Perfil
+    </a>
+    <a href="#experience" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Experiencia
+    </a>
+    <a href="#projects" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Proyectos
+    </a>
+    <a href="#skills" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Habilidades
+    </a>
+    <a href="#education" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Educación
+    </a>
+    <a href="#contact" class="nav-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Contacto
+    </a>
+  </div>
+
+  <div class="nav-bottom">
+    <div class="nav-avail">
+      <span class="nav-dot"></span>
+      Disponible ahora
+    </div>
+    <div class="social-row">
+      <a href="mailto:brayangonzalez030405@gmail.com" class="social-btn" title="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/brayan-gael-garcia-gonzalez" target="_blank" class="social-btn" title="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+      <a href="tel:+524681570358" class="social-btn" title="Teléfono">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.07 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16l.92.92z"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HERO -->
+  <section id="hero" style="opacity:1;transform:none;">
+    <p class="hero-eyebrow">QA Engineer &amp; Software Developer</p>
+    <h1 class="hero-name">
+      Brayan Gael
+      <span class="line2">García González</span>
+    </h1>
+    <p class="hero-role">
+      <span>Disponible</span>
+      Ingeniero en Desarrollo y Gestión de Software
+    </p>
+    <p class="hero-desc">
+      Especializado en QA, desarrollo móvil con Flutter y soluciones full-stack. 
+      Apasionado por la calidad del software, la mejora continua y los equipos multidisciplinarios.
+    </p>
+    <div class="hero-cta">
+      <a href="#experience" class="btn-primary">Ver experiencia</a>
+      <a href="#contact" class="btn-secondary">Contactarme</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">2+</span>
+        <span class="stat-label">Años de experiencia</span>
+      </div>
+      <div>
+        <span class="stat-num">4</span>
+        <span class="stat-label">Proyectos destacados</span>
+      </div>
+      <div>
+        <span class="stat-num">7</span>
+        <span class="stat-label">Certificaciones</span>
+      </div>
+    </div>
+    <div class="hero-bg-text">QA</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="sec-label">// 01 · Perfil</p>
+    <h2 class="sec-title">Sobre <em>mí</em></h2>
+    <div class="about-grid">
+      <div>
+        <p class="about-text">
+          Soy un ingeniero enfocado en garantizar la <strong>calidad del software</strong> y el desarrollo de soluciones tecnológicas escalables. 
+          Actualmente me desempeño como <strong>QA Engineer</strong> en Qaracter México, donde ejecuto pruebas funcionales completas y gestiono el ciclo de vida de defectos con Azure DevOps.
+        </p>
+        <p class="about-text">
+          Mi experiencia en <strong>Flutter</strong> y desarrollo full-stack me da una perspectiva única como QA: entiendo el código que pruebo. 
+          Trabajo bajo metodologías <strong>Scrum</strong>, me adapto rápido a nuevas tecnologías y me comunico efectivamente con equipos de desarrollo.
+        </p>
+        <p class="about-text">
+          Ubicado en Guanajuato, México. <strong>Inglés técnico intermedio</strong> — lectura de documentación sin problema.
+        </p>
+      </div>
+      <div class="about-contact">
+        <a class="contact-row" href="mailto:brayangonzalez030405@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+          brayangonzalez030405@gmail.com
+          <span class="contact-label">Email</span>
+        </a>
+        <a class="contact-row" href="tel:+524681570358">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.07 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16l.92.92z"/></svg>
+          +52 468 157 0358
+          <span class="contact-label">Teléfono</span>
+        </a>
+        <a class="contact-row" href="https://linkedin.com/in/brayan-gael-garcia-gonzalez" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          linkedin.com/in/brayan-gael-garcia-gonzalez
+          <span class="contact-label">LinkedIn</span>
+        </a>
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Querétaro / Guanajuato, México
+          <span class="contact-label">Ubicación</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <p class="sec-label">// 02 · Trayectoria</p>
+    <h2 class="sec-title">Experiencia <em>profesional</em></h2>
+    <div class="exp-list">
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <p class="exp-period">Ene 2026 — Actualidad</p>
+          <p class="exp-company">Qaracter México</p>
+          <p class="exp-location">Querétaro · Remoto</p>
+          <span class="exp-badge">4 meses</span>
+        </div>
+        <div class="exp-content">
+          <p class="exp-role">Practicante — QA Engineer</p>
+          <ul class="exp-bullets">
+            <li>Ejecución de pruebas funcionales en ciclo completo, identificando y documentando defectos con precisión y trazabilidad.</li>
+            <li>Gestión del ciclo de pruebas mediante Azure DevOps, asegurando seguimiento efectivo de incidencias y versiones.</li>
+            <li>Elaboración de planes de prueba y documentación técnica en colaboración directa con equipos de desarrollo.</li>
+            <li>Aplicación de enfoques de calidad y mejora continua en el proceso de validación del software.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <p class="exp-period">May — Ago 2024</p>
+          <p class="exp-company">Paradigma</p>
+          <p class="exp-location">Dolores Hidalgo, Gto. · Presencial</p>
+          <span class="exp-badge">4 meses</span>
+        </div>
+        <div class="exp-content">
+          <p class="exp-role">Desarrollador Móvil &amp; Web</p>
+          <ul class="exp-bullets">
+            <li>Desarrollo de aplicaciones móviles con Flutter: diseño de interfaces, lógica de negocio y consumo de APIs REST.</li>
+            <li>Implementación de navegación, manejo de estados y depuración de funcionalidades en entornos móviles.</li>
+            <li>Diseño de interfaces web responsivas con enfoque en experiencia de usuario (UX).</li>
+            <li>Integración con bases de datos en ciclo completo de desarrollo full-stack bajo metodología Scrum.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="sec-label">// 03 · Trabajo</p>
+    <h2 class="sec-title">Proyectos <em>destacados</em></h2>
+    <div class="projects-wrap">
+
+      <div class="proj-card">
+        <div class="proj-num">01</div>
+        <div class="proj-info">
+          <p class="proj-name">Sistema de Gestión de Pedidos con OCR</p>
+          <p class="proj-desc">Digitaliza pedidos desde imágenes usando reconocimiento óptico de caracteres, optimizando velocidad y precisión en el registro.</p>
+          <div class="proj-tags">
+            <span class="ptag">Python</span><span class="ptag">OCR</span><span class="ptag">Procesamiento de imágenes</span>
+          </div>
+        </div>
+        <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-num">02</div>
+        <div class="proj-info">
+          <p class="proj-name">App Móvil de Optimización de Rutas de Entrega</p>
+          <p class="proj-desc">Aplicación Flutter con mapas interactivos, notificaciones en tiempo real y algoritmos de rutas. Incluye módulo de seguimiento y reportes.</p>
+          <div class="proj-tags">
+            <span class="ptag">Flutter</span><span class="ptag">Dart</span><span class="ptag">Maps API</span><span class="ptag">Algoritmos de rutas</span>
+          </div>
+        </div>
+        <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-num">03</div>
+        <div class="proj-info">
+          <p class="proj-name">Modelo Predictivo de Abandono Escolar</p>
+          <p class="proj-desc">Detecta riesgo de deserción estudiantil mediante regresión logística, con reportes estadísticos y visualizaciones interactivas.</p>
+          <div class="proj-tags">
+            <span class="ptag">Python</span><span class="ptag">Scikit-learn</span><span class="ptag">Matplotlib</span>
+          </div>
+        </div>
+        <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-num">04</div>
+        <div class="proj-info">
+          <p class="proj-name">Data Warehouse Epidemiológico</p>
+          <p class="proj-desc">Análisis de enfermedades en México usando Data Warehouse y operaciones OLAP para consultas multidimensionales y reportes de salud pública.</p>
+          <div class="proj-tags">
+            <span class="ptag">SQL</span><span class="ptag">OLAP</span><span class="ptag">Data Warehouse</span><span class="ptag">Business Intelligence</span>
+          </div>
+        </div>
+        <div class="proj-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="sec-label">// 04 · Capacidades</p>
+    <h2 class="sec-title">Habilidades <em>técnicas</em></h2>
+    <div class="skills-cols">
+
+      <div class="skill-block">
+        <div class="sb-icon">💻</div>
+        <p class="sb-cat">Lenguajes</p>
+        <div class="sb-pills">
+          <span class="spill">Python</span><span class="spill">Java</span>
+          <span class="spill">Dart</span><span class="spill">JavaScript</span><span class="spill">SQL</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="sb-icon">📱</div>
+        <p class="sb-cat">Frontend / Móvil</p>
+        <div class="sb-pills">
+          <span class="spill">Flutter</span><span class="spill">HTML</span>
+          <span class="spill">CSS</span><span class="spill">Diseño responsivo</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="sb-icon">⚙️</div>
+        <p class="sb-cat">Backend</p>
+        <div class="sb-pills">
+          <span class="spill">Spring Boot</span><span class="spill">Flask</span><span class="spill">APIs REST</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="sb-icon">🗄️</div>
+        <p class="sb-cat">Bases de Datos</p>
+        <div class="sb-pills">
+          <span class="spill">PostgreSQL</span><span class="spill">MongoDB</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="sb-icon">🧪</div>
+        <p class="sb-cat">QA / Testing</p>
+        <div class="sb-pills">
+          <span class="spill">Pruebas funcionales</span>
+          <span class="spill">Gestión de defectos</span>
+          <span class="spill">Documentación técnica</span>
+          <span class="spill">Azure DevOps</span>
+        </div>
+      </div>
+
+      <div class="skill-block">
+        <div class="sb-icon">🔧</div>
+        <p class="sb-cat">DevOps / Metodologías</p>
+        <div class="sb-pills">
+          <span class="spill">Docker</span><span class="spill">GitHub Actions</span>
+          <span class="spill">Scrum</span><span class="spill">Jira</span>
+          <span class="spill">Git</span><span class="spill">Swagger</span>
+          <span class="spill">Mendix</span><span class="spill">Linux</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <p class="sec-label">// 05 · Formación</p>
+    <h2 class="sec-title">Educación &amp; <em>Certificaciones</em></h2>
+    <div class="edu-cols">
+      <div>
+        <div class="edu-list">
+          <div class="edu-item">
+            <p class="ei-period">Sept. 2024 — Abr. 2026</p>
+            <p class="ei-degree">Ingeniería en Desarrollo y Gestión de Software</p>
+            <p class="ei-school">Universidad Tecnológica del Norte de Guanajuato (UTNG)</p>
+          </div>
+          <div class="edu-item">
+            <p class="ei-period">2022 — 2024</p>
+            <p class="ei-degree">TSU en Desarrollo de Software Multiplataforma</p>
+            <p class="ei-school">Universidad Tecnológica del Norte de Guanajuato (UTNG)</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="certs-title">Certificaciones</p>
+        <div class="cert-list">
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">Scrum Fundamentals Certified (SFC) — SCRUMstudy</span><span class="cr-year">2025</span></div>
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">Rapid Developer Certification — Mendix</span><span class="cr-year">2025</span></div>
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">What is Networking — Cisco / LinkedIn Learning</span><span class="cr-year">2026</span></div>
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">CCNAv7: Introduction to Networks — Cisco</span><span class="cr-year">2022</span></div>
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">IT Essentials: PC Hardware &amp; Software — Cisco</span><span class="cr-year">2022</span></div>
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">NDG Linux Essentials — Cisco Networking Academy</span><span class="cr-year">2023</span></div>
+          <div class="cert-row"><span class="cr-dot"></span><span class="cr-name">Desarrollo de Software y Tecnologías Cloud — OPTIMEN</span><span class="cr-year">2023</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="sec-label">// 06 · Hablemos</p>
+    <h2 class="sec-title">¿Listo para <em>colaborar?</em></h2>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-msg">
+          Estoy <strong>abierto a nuevas oportunidades</strong> — ya sea como QA Engineer, desarrollador móvil, o roles híbridos. 
+          Si tienes un proyecto o posición en mente, escríbeme y con gusto conversamos.
+        </p>
+        <a href="mailto:brayangonzalez030405@gmail.com" class="btn-primary">Enviar mensaje</a>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:brayangonzalez030405@gmail.com" class="cl-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+          brayangonzalez030405@gmail.com
+        </a>
+        <a href="tel:+524681570358" class="cl-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.07 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16l.92.92z"/></svg>
+          +52 468 157 0358
+        </a>
+        <a href="https://linkedin.com/in/brayan-gael-garcia-gonzalez" target="_blank" class="cl-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          linkedin.com/in/brayan-gael-garcia-gonzalez
+        </a>
+      </div>
+    </div>
+    <p class="footer-copy">© 2026 · BRAYAN GAEL GARCÍA GONZÁLEZ · GUANAJUATO, MÉXICO</p>
+  </section>
+
+</main>
+
+<script>
+// Custom cursor
+const cur = document.getElementById('cur');
+const curRing = document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+function animRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  curRing.style.left=rx+'px'; curRing.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cur.style.width='18px'; cur.style.height='18px'; cur.style.opacity='.5';
+    curRing.style.width='52px'; curRing.style.height='52px';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cur.style.width='10px'; cur.style.height='10px'; cur.style.opacity='1';
+    curRing.style.width='36px'; curRing.style.height='36px';
+  });
+});
+
+// Hamburger
+const ham = document.getElementById('ham');
+const sidebar = document.getElementById('sidebar');
+ham.addEventListener('click',()=>sidebar.classList.toggle('open'));
+
+// Active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(l=>l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if(active) active.classList.add('active');
+    }
+  });
+},{threshold:.4});
+
+sections.forEach(s=>observer.observe(s));
+
+// Scroll reveal
+const revealObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+},{threshold:.1});
+
+document.querySelectorAll('section:not(#hero)').forEach(s=>revealObs.observe(s));
+
+// Smooth nav close on mobile
+navLinks.forEach(l=>l.addEventListener('click',()=>sidebar.classList.remove('open')));
+</script>
+</body>
+</html>
